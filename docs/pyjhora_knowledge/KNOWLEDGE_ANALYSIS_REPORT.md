@@ -31,6 +31,16 @@ All primary PyJHora reference markdowns now reside under `docs/docs/pyjhora_know
 - `tests_contract` codifies the regression suites that `PYJHORA_GAPS_ANALYSIS.md` singled out as mission-critical, and `experimental/Experimental_and_Hidden.md` preserves the hidden features that extend beyond the “stable” API surface.
 - `ui_catalog` mirrors the UI modules referenced in `PYJHORA_API_COMPLETE_REFERENCE.md`/`PYJHORA_INTEGRATION_PATTERNS.md`, keeping the presentation layer separate from the engine core.
 
+## 3. Using `extractor_knowledge` to refresh the PyJHora knowledge pack
+
+- When PyJHora itself is updated, regenerate the artifacts that drive `docs/pyjhora_knowledge/`:
+  1. Run `docs/extractor_knowledge/knowledge_scan_full.py` to re-scan every module, flag experimental markers, and rebuild the API inventory model.
+  2. Run `docs/extractor_knowledge/build_knowledge_artifacts.py` to refresh `CorePrimitives.json`, the data-file map, and the tests contract manifest.
+  3. Replace the generated JSON/MD under `docs/pyjhora_knowledge/` so the knowledge repo reflects the latest PyJHora surface.
+  4. Reconcile the Refraction Engine specs (`engine_config_spec_v1`, `api_whitelist_core_chart_v1`, `tests_binding_core_chart_v1`) with the new artifacts so extractor expectations stay aligned with the refreshed bundle.
+- `docs/extractor_knowledge/` is therefore a **knowledge generator**: CLI scripts such as `core_chart_cli.py`, `panchanga_*`, `dasha_cli.py`, `muhurta_cli.py`, `strength_trends_cli.py`, and `transit_cli.py` produce golden data samples, but Refraction Engine V1 (`src/refraction_engine/`) only consumes the resulting JSON/MD and never imports these scripts at runtime.
+- Legacy references such as `v0min_core_spec.md` remain for historical context only; the active architecture rides on `src/refraction_engine/` + `docs/specs/*`, with `pyjhora_knowledge` acting as the authoritative bridge.
+
 ### Concept mapping
 
 | Concept | Defining spec(s) | Structured knowledge asset(s) |
@@ -43,7 +53,7 @@ All primary PyJHora reference markdowns now reside under `docs/docs/pyjhora_know
 | UI modules | `PYJHORA_API_COMPLETE_REFERENCE.md`, `PYJHORA_INTEGRATION_PATTERNS.md`, `PYJHORA_HIDDEN_FEATURES.md` | `docs/pyjhora_knowledge/ui_catalog/UI_Modules.md` |
 | Hidden/experimental behaviors | `PYJHORA_HIDDEN_FEATURES.md`, `PYJHORA_GAPS_ANALYSIS.md` | `docs/pyjhora_knowledge/experimental/Experimental_and_Hidden.md`, `docs/pyjhora_knowledge/maps/PyJHora_Structural_Map_summary.json` (flags) |
 
-## 3. For a future “Calculator Engine V1”
+## 4. For a future “Calculator Engine V1”
 
 ### Sources of truth
 - **Engine configuration options**: `PYJHORA_CONFIGURATION_OPTIONS.md` + defaults recorded in `docs/pyjhora_knowledge/maps/PyJHora_Structural_Map_summary.json` capture valid modes, chart flags, language toggles, and house/dasha choices.
@@ -58,7 +68,7 @@ All primary PyJHora reference markdowns now reside under `docs/docs/pyjhora_know
 4. `tests_contract.json` – reuses the existing `docs/pyjhora_knowledge/tests_contract/PyJHora_Tests_Contract.json` to declare mandatory regression suites and representative cases.
 5. `data_files_manifest.json` – distilled view of `docs/pyjhora_knowledge/data_map/PyJHora_Data_Files_Map.json` so the engine knows which CSV/ephemeris inputs match which subsystems.
 
-## 4. Gaps / TODOs
+## 5. Gaps / TODOs
 
 - No single canonical file currently unifies the configuration defaults, experimental flags, and safe entry points (the structural map notes “no safe entry points captured”). Consider amending `PyJHora_Structural_Map_summary.json` or adding a dedicated `engine_defaults.json`.
 - The UI catalog is descriptive but not tied back to API capabilities—align `docs/pyjhora_knowledge/ui_catalog/UI_Modules.md` entries with the integration patterns or API reference to expose whichever data endpoints populate each widget.
